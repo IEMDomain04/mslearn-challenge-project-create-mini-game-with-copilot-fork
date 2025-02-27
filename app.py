@@ -1,15 +1,10 @@
 import random
+import tkinter as tk
+from tkinter import messagebox
 
 def get_computer_choice():
     choices = ["rock", "paper", "scissors"]
     return random.choice(choices)
-
-def get_user_choice():
-    choice = input("Enter your choice (rock, paper, scissors): ").lower()
-    while choice not in ["rock", "paper", "scissors"]:
-        print("Invalid choice. Please try again.")
-        choice = input("Enter your choice (rock, paper, scissors): ").lower()
-    return choice
 
 def determine_winner(user_choice, computer_choice):
     if user_choice == computer_choice:
@@ -21,33 +16,49 @@ def determine_winner(user_choice, computer_choice):
     else:
         return "computer"
 
-def play_game():
+def play_game(user_choice):
+    global user_score, computer_score
+    computer_choice = get_computer_choice()
+    winner = determine_winner(user_choice, computer_choice)
+    
+    if winner == "user":
+        user_score += 1
+        result = "You win this round!"
+    elif winner == "computer":
+        computer_score += 1
+        result = "Computer wins this round!"
+    else:
+        result = "It's a draw!"
+    
+    result_message = f"Computer chose: {computer_choice}\n{result}\n\nScore -> You: {user_score}, Computer: {computer_score}"
+    messagebox.showinfo("Result", result_message)
+
+def reset_game():
+    global user_score, computer_score
     user_score = 0
     computer_score = 0
-    while True:
-        user_choice = get_user_choice()
-        computer_choice = get_computer_choice()
-        print(f"Computer chose: {computer_choice}")
+    messagebox.showinfo("Game Reset", "Scores have been reset!")
 
-        winner = determine_winner(user_choice, computer_choice)
-        if winner == "user":
-            user_score += 1
-            print("You win this round!")
-        elif winner == "computer":
-            computer_score += 1
-            print("Computer wins this round!")
-        else:
-            print("It's a draw!")
+user_score = 0
+computer_score = 0
 
-        print(f"Score -> You: {user_score}, Computer: {computer_score}")
+# Set up the main application window
+root = tk.Tk()
+root.title("Rock Paper Scissors")
 
-        play_again = input("Do you want to play again? (yes/no): ").lower()
-        if play_again != "yes":
-            break
+# Create buttons for user choices
+rock_button = tk.Button(root, text="Rock", command=lambda: play_game("rock"))
+rock_button.pack(side=tk.LEFT, padx=20, pady=20)
 
-    print("Final Score:")
-    print(f"You: {user_score}")
-    print(f"Computer: {computer_score}")
+paper_button = tk.Button(root, text="Paper", command=lambda: play_game("paper"))
+paper_button.pack(side=tk.LEFT, padx=20, pady=20)
 
-if __name__ == "__main__":
-    play_game()
+scissors_button = tk.Button(root, text="Scissors", command=lambda: play_game("scissors"))
+scissors_button.pack(side=tk.LEFT, padx=20, pady=20)
+
+# Create a button to reset the game
+reset_button = tk.Button(root, text="Reset Game", command=reset_game)
+reset_button.pack(side=tk.LEFT, padx=20, pady=20)
+
+# Start the GUI event loop
+root.mainloop()
